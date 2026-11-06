@@ -1,0 +1,18 @@
+<Project>
+  <!-- Host-side C# checks for the package, outside Unity. Unity ignores this
+       folder (its name ends in ~). Tools~/host-test-csharp.sh downloads the
+       Unity reference assemblies and passes their folders in. -->
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageRoot>$(MSBuildThisFileDirectory)../../</PackageRoot>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Fload.Attribution.HostTests'">
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(UnityEngineDir)/UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AndroidJNIModule"><HintPath>$(UnityEngineDir)/UnityEngine.AndroidJNIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(UnityEngineDir)/UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

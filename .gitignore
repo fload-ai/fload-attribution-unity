@@ -1,0 +1,4 @@
+.DS_Store
+*.tgz
+Tests~/HostTests/bin/
+Tests~/HostTests/obj/

@@ -1,0 +1,23 @@
+{
+  "name": "com.fload.attribution",
+  "version": "1.0.0",
+  "displayName": "Fload Attribution",
+  "description": "Fload install attribution for Unity apps on iOS and Android: Apple Ads through Apple's AdServices token, Google Play through the Install Referrer. No IDFA, no tracking prompt, no events. Wraps fload-attribution-ios and fload-attribution-android.",
+  "unity": "2021.3",
+  "documentationUrl": "https://github.com/fload-ai/fload-attribution-unity#readme",
+  "changelogUrl": "https://github.com/fload-ai/fload-attribution-unity/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/fload-ai/fload-attribution-unity/blob/main/LICENSE.md",
+  "license": "MIT",
+  "keywords": ["attribution", "apple ads", "adservices", "install referrer", "fload"],
+  "author": {
+    "name": "Fload",
+    "url": "https://fload.com"
+  },
+  "samples": [
+    {
+      "displayName": "Example",
+      "description": "A scene that configures the SDK against a local stub ingest and shows the install reference.",
+      "path": "Samples~/Example"
+    }
+  ]
+}

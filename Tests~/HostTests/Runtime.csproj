@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The runtime assembly, compiled once per player platform:
+       dotnet build Runtime.csproj -p:UnityDefines="UNITY_IOS" (or UNITY_ANDROID, or none). -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Fload.Attribution</AssemblyName>
+    <DefineConstants>$(DefineConstants);$(UnityDefines)</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(PackageRoot)Runtime/**/*.cs" />
+  </ItemGroup>
+</Project>
