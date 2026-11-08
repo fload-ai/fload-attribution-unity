@@ -18,13 +18,13 @@ Unity 2021.3 or later. iOS 15 or later, Android 7 (API 24) or later.
 1. **The package.** Window > Package Manager > + > Add package from git URL:
 
    ```
-   https://github.com/fload-ai/fload-attribution-unity.git#1.0.0
+   https://github.com/fload-ai/fload-attribution-unity.git#1.1.0
    ```
 
    Or in `Packages/manifest.json`:
 
    ```json
-   "com.fload.attribution": "https://github.com/fload-ai/fload-attribution-unity.git#1.0.0"
+   "com.fload.attribution": "https://github.com/fload-ai/fload-attribution-unity.git#1.1.0"
    ```
 
 2. **Android: the External Dependency Manager.** The Kotlin SDK is a Gradle
