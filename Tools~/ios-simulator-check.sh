@@ -17,6 +17,11 @@ work="$(mktemp -d)"
 stub_script="$root/Tools~/stub-ingest.mjs"
 . "$root/Tools~/sim-common.sh"
 trap 'finish; rm -rf "$work"' EXIT
+# The wrapper name and version Runtime/FloadAttribution.cs passes to the native
+# side, and the package version they must match.
+wrapper_name="$(sed -n 's/.*const string WrapperName = "\([^"]*\)".*/\1/p' Runtime/FloadAttribution.cs)"
+wrapper_version="$(sed -n 's/.*const string Version = "\([^"]*\)".*/\1/p' Runtime/FloadAttribution.cs)"
+package_version="$(node -p 'require("./package.json").version')"
 
 swift_sources="Plugins/iOS/FloadAttribution/*.swift Plugins/iOS/FloadAttributionUnityBridge.swift"
 
@@ -46,11 +51,12 @@ stub_start 3999
 mkdir -p "$work/home"
 # A throwaway home, so every run is a first launch.
 SIMCTL_CHILD_CFFIXED_USER_HOME="$work/home" \
-  xcrun simctl spawn "$udid" "$work/sim/bridge-host-test" "http://127.0.0.1:3999" "unity-host-user-1"
+  xcrun simctl spawn "$udid" "$work/sim/bridge-host-test" "http://127.0.0.1:3999" "unity-host-user-1" "$wrapper_name" "$wrapper_version"
 
 curl -sf "http://127.0.0.1:3999/__requests" > "$work/requests.json"
-node - "$work/requests.json" <<'JS'
+node - "$work/requests.json" "$package_version" <<'JS'
 const requests = JSON.parse(require('fs').readFileSync(process.argv[2], 'utf8'));
+const packageVersion = process.argv[3];
 const installs = requests.filter((r) => r.route === 'installs');
 const identifies = requests.filter((r) => r.route === 'identify');
 let failed = 0;
@@ -60,11 +66,13 @@ check(installs.length === 1, `one install sent (got ${installs.length})`);
 check(install && install.status === 202, 'the stub accepted the install (contract valid)');
 check(install && install.body.platform === 'ios', 'platform ios');
 check(install && install.body.sdk.name === 'fload-attribution-ios', 'sent by the Swift SDK');
+const wrapper = install && install.body.sdk.wrapper;
+check(wrapper && wrapper.name === 'unity' && wrapper.version === packageVersion && Object.keys(wrapper).length === 2, `sdk.wrapper is {"unity", "${packageVersion}"} (package.json)`);
 const linked = (install && install.body.appUserId === 'unity-host-user-1') || identifies.some((r) => r.status === 202 && r.body.appUserId === 'unity-host-user-1');
 check(linked, 'user id set before configure reached the stub');
 const later = identifies.find((r) => r.body.appUserId === 'unity-host-user-2');
 check(later && later.status === 202 && install && later.body.installReference === install.body.installReference, 'user id set after the install went out as an identify for the same install');
-console.log(`appleAds: ${JSON.stringify(install && install.body.appleAds)}  osVersion: ${install && install.body.osVersion}  deviceModel: ${install && install.body.deviceModel}`);
+console.log(`sdk: ${JSON.stringify(install && install.body.sdk)}  appleAds: ${JSON.stringify(install && install.body.appleAds)}  osVersion: ${install && install.body.osVersion}  deviceModel: ${install && install.body.deviceModel}`);
 process.exit(failed ? 1 : 0);
 JS
 echo "stub log:"; cat "$work/stub.log"

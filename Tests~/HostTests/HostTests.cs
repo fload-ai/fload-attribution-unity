@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text.Json;
 using Fload.Attribution;
 using Fload.Attribution.Editor;
 
@@ -21,12 +23,16 @@ internal static class HostTests
     private static int Main()
     {
         var calls = NativeBridge.Recording.Calls;
+        // Run from the package root (Tools~/host-test-csharp.sh): package.json holds the version.
+        var packageVersion = JsonDocument.Parse(File.ReadAllText("package.json")).RootElement.GetProperty("version").GetString();
+        Check(FloadAttribution.Version == packageVersion, $"FloadAttribution.Version is package.json's version ({packageVersion})");
 
         FloadAttribution.Configure("fload_pk_abc");
-        Check(calls[calls.Count - 1] == "configure fload_pk_abc https://ingest.fload.com Warning", "defaults: production endpoint, warning");
+        Check(calls[calls.Count - 1] == $"configure fload_pk_abc https://ingest.fload.com Warning unity {packageVersion}",
+            "defaults: production endpoint, warning; the wrapper names itself unity at the package version");
 
         FloadAttribution.Configure("fload_pk_abc", new FloadOptions { Endpoint = "http://localhost:3999", LogLevel = FloadLogLevel.Debug });
-        Check(calls[calls.Count - 1] == "configure fload_pk_abc http://localhost:3999 Debug", "endpoint and log level pass through");
+        Check(calls[calls.Count - 1] == $"configure fload_pk_abc http://localhost:3999 Debug unity {packageVersion}", "endpoint and log level pass through");
 
         var before = calls.Count;
         Check(Throws<ArgumentException>(() => FloadAttribution.Configure(null)), "null key throws");

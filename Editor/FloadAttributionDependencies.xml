@@ -7,7 +7,7 @@
      CocoaPods trunk turns read-only on 2 December 2026 and the SDK is not a pod. -->
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.github.fload-ai:fload-attribution-android:1.0.1">
+    <androidPackage spec="com.github.fload-ai:fload-attribution-android:1.1.0">
       <repositories>
         <repository>https://jitpack.io</repository>
       </repositories>
