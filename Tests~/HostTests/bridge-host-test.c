@@ -6,13 +6,14 @@
 #include <string.h>
 #include <unistd.h>
 
-void FloadAttribution_Configure(const char *key, const char *endpoint, int logLevel);
+void FloadAttribution_Configure(const char *key, const char *endpoint, int logLevel,
+                               const char *wrapperName, const char *wrapperVersion);
 void FloadAttribution_SetUserId(const char *userId);
 char *FloadAttribution_InstallReference(void);
 
 int main(int argc, char **argv) {
-    if (argc < 3) {
-        fprintf(stderr, "usage: bridge-host-test <endpoint> <user id>\n");
+    if (argc < 5) {
+        fprintf(stderr, "usage: bridge-host-test <endpoint> <user id> <wrapper name> <wrapper version>\n");
         return 2;
     }
     char *before = FloadAttribution_InstallReference();
@@ -20,8 +21,9 @@ int main(int argc, char **argv) {
     free(before);
 
     FloadAttribution_SetUserId(argv[2]);              // before configure: the SDK buffers it
-    FloadAttribution_Configure("fload_pk_hosttest", argv[1], 4);
-    FloadAttribution_Configure("fload_pk_hosttest", argv[1], 4);  // a second call is ignored
+    // The wrapper name and version FloadAttribution.cs passes (FloadAttribution.WrapperName, .Version).
+    FloadAttribution_Configure("fload_pk_hosttest", argv[1], 4, argv[3], argv[4]);
+    FloadAttribution_Configure("fload_pk_hosttest", argv[1], 4, argv[3], argv[4]);  // a second call is ignored
 
     char *reference = NULL;
     for (int i = 0; i < 50 && reference == NULL; i++) {

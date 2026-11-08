@@ -19,10 +19,15 @@ static NSString *FloadString(const char *value) {
 
 extern "C" {
 
-void FloadAttribution_Configure(const char *key, const char *endpoint, int logLevel) {
+void FloadAttribution_Configure(const char *key, const char *endpoint, int logLevel,
+                                const char *wrapperName, const char *wrapperVersion) {
     NSString *keyString = FloadString(key);
     if (keyString == nil) return;  // C# refuses an empty key before it gets here.
-    [FloadAttributionUnityBridge configureWithKey:keyString endpoint:FloadString(endpoint) logLevel:logLevel];
+    [FloadAttributionUnityBridge configureWithKey:keyString
+                                         endpoint:FloadString(endpoint)
+                                         logLevel:logLevel
+                                      wrapperName:FloadString(wrapperName)
+                                   wrapperVersion:FloadString(wrapperVersion)];
 }
 
 void FloadAttribution_SetUserId(const char *userId) {

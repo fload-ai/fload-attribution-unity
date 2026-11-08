@@ -33,7 +33,7 @@ Unity 2021.3 or later. iOS 15 or later, Android 7 (API 24) or later.
    (EDM4U). Most projects that use Firebase, AdMob or another Google SDK already
    have it. If yours does not, install it (its README lists the ways, including
    OpenUPM), then run Assets > External Dependency Manager > Android Resolver >
-   Resolve. It adds `com.github.fload-ai:fload-attribution-android:1.0.1` from
+   Resolve. It adds `com.github.fload-ai:fload-attribution-android:1.1.0` from
    JitPack.
 
    Without EDM4U, add the dependency yourself: tick Project Settings > Player >
@@ -45,7 +45,7 @@ Unity 2021.3 or later. iOS 15 or later, Android 7 (API 24) or later.
    maven { url 'https://jitpack.io'; content { includeGroup 'com.github.fload-ai' } }
 
    // Assets/Plugins/Android/mainTemplate.gradle, inside dependencies { … }
-   implementation 'com.github.fload-ai:fload-attribution-android:1.0.1'
+   implementation 'com.github.fload-ai:fload-attribution-android:1.1.0'
    ```
 
 3. **iOS: the minimum version.** Set Project Settings > Player > iOS > Other

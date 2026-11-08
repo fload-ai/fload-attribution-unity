@@ -8,7 +8,8 @@ namespace Fload.Attribution
 {
     internal interface INativeBridge
     {
-        void Configure(string key, string endpoint, FloadLogLevel logLevel);
+        /// <summary><paramref name="wrapperName"/> and <paramref name="wrapperVersion"/> go out as <c>sdk.wrapper</c>.</summary>
+        void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion);
         void SetUserId(string id);
         string InstallReference();
     }
@@ -32,7 +33,7 @@ namespace Fload.Attribution
     {
         private bool _told;
 
-        public void Configure(string key, string endpoint, FloadLogLevel logLevel)
+        public void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion)
         {
             if (_told) return;
             _told = true;
@@ -51,13 +52,13 @@ namespace Fload.Attribution
     /// </summary>
     internal sealed class IosBridge : INativeBridge
     {
-        [DllImport("__Internal")] private static extern void FloadAttribution_Configure(string key, string endpoint, int logLevel);
+        [DllImport("__Internal")] private static extern void FloadAttribution_Configure(string key, string endpoint, int logLevel, string wrapperName, string wrapperVersion);
         [DllImport("__Internal")] private static extern void FloadAttribution_SetUserId(string id);
         // Returns a malloc'd UTF-8 copy (or NULL). The marshaller frees it.
         [DllImport("__Internal")] private static extern string FloadAttribution_InstallReference();
 
-        public void Configure(string key, string endpoint, FloadLogLevel logLevel) =>
-            FloadAttribution_Configure(key, endpoint, (int)logLevel);
+        public void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion) =>
+            FloadAttribution_Configure(key, endpoint, (int)logLevel, wrapperName, wrapperVersion);
 
         public void SetUserId(string id) => FloadAttribution_SetUserId(id);
 
@@ -74,7 +75,7 @@ namespace Fload.Attribution
     {
         private const string FloadClass = "com.fload.attribution.Fload";
 
-        public void Configure(string key, string endpoint, FloadLogLevel logLevel)
+        public void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion)
         {
             Guarded("Configure", () =>
             {
@@ -82,7 +83,10 @@ namespace Fload.Attribution
                 using (var activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
                 using (var levels = new AndroidJavaClass("com.fload.attribution.FloadLogLevel"))
                 using (var level = levels.GetStatic<AndroidJavaObject>(JavaLogLevel(logLevel)))
-                using (var options = new AndroidJavaObject("com.fload.attribution.FloadOptions", endpoint, level))
+                // FloadOptions(String, FloadLogLevel, FloadWrapper), fload-attribution-android 1.1.0+:
+                // the SDK sends the wrapper as sdk.wrapper.
+                using (var wrapper = new AndroidJavaObject("com.fload.attribution.FloadWrapper", wrapperName, wrapperVersion))
+                using (var options = new AndroidJavaObject("com.fload.attribution.FloadOptions", endpoint, level, wrapper))
                 using (var fload = new AndroidJavaClass(FloadClass))
                 {
                     // Fload.configure keeps only the application context.

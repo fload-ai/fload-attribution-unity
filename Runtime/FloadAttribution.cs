@@ -16,7 +16,14 @@ namespace Fload.Attribution
     public static class FloadAttribution
     {
         /// <summary>This package's version.</summary>
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
+
+        /// <summary>
+        /// The name every native configure call gives this wrapper, with <see cref="Version"/>.
+        /// The native SDKs send both as <c>sdk.wrapper</c>, so Fload knows the install came
+        /// through this package.
+        /// </summary>
+        internal const string WrapperName = "unity";
 
         private static readonly INativeBridge Bridge = NativeBridge.Create();
 
@@ -30,7 +37,7 @@ namespace Fload.Attribution
         public static void Configure(string key, FloadOptions options = null)
         {
             var configuration = ArgumentRules.Configuration(key, options);
-            Bridge.Configure(configuration.Key, configuration.Endpoint, configuration.LogLevel);
+            Bridge.Configure(configuration.Key, configuration.Endpoint, configuration.LogLevel, WrapperName, Version);
         }
 
         /// <summary>

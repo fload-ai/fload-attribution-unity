@@ -12,6 +12,8 @@
 //
 // GET /__requests returns every request it received (the token shortened), and
 // DELETE /__requests clears them, so a test can assert what the SDK sent.
+// An sdk.wrapper Fload would drop (an unknown name, a version that is not
+// semver) is recorded as sdk.wrapperDropped: Fload drops it, never refuses it.
 // No dependencies; Node 18 or later.
 import { createServer } from 'node:http';
 
@@ -22,6 +24,9 @@ const APPLE_STATUSES = ['token', 'token_expired', 'unsupported_os', 'token_error
 const PLAY_STATUSES = ['ok', 'unavailable', 'not_supported', 'error'];
 const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
 const PHONE_ID = /^[A-Za-z0-9._:-]{8,128}$/;
+// FLO-3957: the wrappers Fload knows (ATTRIBUTION_SDK_WRAPPERS in the contract).
+const WRAPPERS = ['flutter', 'react-native', 'capacitor', 'cordova', 'unity', 'dotnet', 'kmp'];
+const SEMVER = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.+-]+)?$/;
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', 'http://stub');
@@ -84,6 +89,7 @@ function validate(route, b) {
   else {
     text(p, b.sdk, 'name', 64, true, 'sdk.');
     text(p, b.sdk, 'version', 64, true, 'sdk.');
+    sdkWrapper(b.sdk);
   }
   instant(p, b, 'firstLaunchAt', true);
   text(p, b, 'appUserId', 256, false);
@@ -111,6 +117,16 @@ function validate(route, b) {
   return p;
 }
 
+function sdkWrapper(sdk) {
+  const w = sdk.wrapper;
+  if (w === undefined) return;
+  const known = typeof w === 'object' && w !== null && WRAPPERS.includes(w.name)
+    && typeof w.version === 'string' && w.version.length <= 64 && SEMVER.test(w.version);
+  if (!known) {
+    sdk.wrapperDropped = w;
+    delete sdk.wrapper;
+  }
+}
 function id(p, o, f) {
   if (typeof o[f] !== 'string' || !PHONE_ID.test(o[f])) p.push(`${f} must be 8 to 128 of [A-Za-z0-9._:-]`);
 }
@@ -136,7 +152,7 @@ function redact(body) {
 function summary(b) {
   if (!b || typeof b !== 'object') return '';
   const source = b.appleAds ? `appleAds=${b.appleAds.status}` : b.playReferrer ? `playReferrer=${b.playReferrer.status}` : '';
-  return [b.platform, b.appId, b.sdk ? `${b.sdk.name}/${b.sdk.version}` : '', source, b.appUserId ? 'appUserId=set' : ''].filter(Boolean).join(' ');
+  return [b.platform, b.appId, b.sdk ? `${b.sdk.name}/${b.sdk.version}${b.sdk.wrapper ? ` via ${b.sdk.wrapper.name}/${b.sdk.wrapper.version}` : ''}` : '', source, b.appUserId ? 'appUserId=set' : ''].filter(Boolean).join(' ');
 }
 function readBody(req) {
   return new Promise((resolve, reject) => {

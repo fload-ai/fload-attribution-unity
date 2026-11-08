@@ -6,7 +6,7 @@ namespace Fload.Attribution
     // it records what FloadAttribution passes to the native side.
     internal interface INativeBridge
     {
-        void Configure(string key, string endpoint, FloadLogLevel logLevel);
+        void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion);
         void SetUserId(string id);
         string InstallReference();
     }
@@ -16,8 +16,8 @@ namespace Fload.Attribution
         internal readonly List<string> Calls = new List<string>();
         internal string Reference;
 
-        public void Configure(string key, string endpoint, FloadLogLevel logLevel) =>
-            Calls.Add($"configure {key} {endpoint} {logLevel}");
+        public void Configure(string key, string endpoint, FloadLogLevel logLevel, string wrapperName, string wrapperVersion) =>
+            Calls.Add($"configure {key} {endpoint} {logLevel} {wrapperName} {wrapperVersion}");
 
         public void SetUserId(string id) => Calls.Add($"setUserId {id}");
 
