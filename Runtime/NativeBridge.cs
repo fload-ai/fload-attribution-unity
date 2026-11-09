@@ -68,8 +68,8 @@ namespace Fload.Attribution
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     /// <summary>
-    /// Android: the Kotlin SDK (com.fload.attribution.Fload, from JitPack through the External
-    /// Dependency Manager) called over JNI. Its entry points are @JvmStatic.
+    /// Android: the Kotlin SDK (com.fload.attribution.Fload, com.fload:attribution from Maven
+    /// Central through the External Dependency Manager) called over JNI. Its entry points are @JvmStatic.
     /// </summary>
     internal sealed class AndroidBridge : INativeBridge
     {
@@ -132,7 +132,7 @@ namespace Fload.Attribution
             }
             catch (Exception error)
             {
-                Debug.LogError("Fload: " + call + " failed; is com.github.fload-ai:fload-attribution-android in the build? " + error.GetType().Name);
+                Debug.LogError("Fload: " + call + " failed; is com.fload:attribution in the build? " + error.GetType().Name);
             }
         }
 

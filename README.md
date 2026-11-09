@@ -18,13 +18,13 @@ Unity 2021.3 or later. iOS 15 or later, Android 7 (API 24) or later.
 1. **The package.** Window > Package Manager > + > Add package from git URL:
 
    ```
-   https://github.com/fload-ai/fload-attribution-unity.git#1.1.0
+   https://github.com/fload-ai/fload-attribution-unity.git#1.1.1
    ```
 
    Or in `Packages/manifest.json`:
 
    ```json
-   "com.fload.attribution": "https://github.com/fload-ai/fload-attribution-unity.git#1.1.0"
+   "com.fload.attribution": "https://github.com/fload-ai/fload-attribution-unity.git#1.1.1"
    ```
 
 2. **Android: the External Dependency Manager.** The Kotlin SDK is a Gradle
@@ -33,20 +33,19 @@ Unity 2021.3 or later. iOS 15 or later, Android 7 (API 24) or later.
    (EDM4U). Most projects that use Firebase, AdMob or another Google SDK already
    have it. If yours does not, install it (its README lists the ways, including
    OpenUPM), then run Assets > External Dependency Manager > Android Resolver >
-   Resolve. It adds `com.github.fload-ai:fload-attribution-android:1.1.0` from
-   JitPack.
+   Resolve. It adds `com.fload:attribution:1.1.0` from Maven Central.
 
    Without EDM4U, add the dependency yourself: tick Project Settings > Player >
-   Android > Publishing Settings > Custom Main Gradle Template and Custom Settings
-   Gradle Template, then add
+   Android > Publishing Settings > Custom Main Gradle Template, then add
 
    ```groovy
-   // Assets/Plugins/Android/settingsTemplate.gradle, inside dependencyResolutionManagement { repositories { … } }
-   maven { url 'https://jitpack.io'; content { includeGroup 'com.github.fload-ai' } }
-
    // Assets/Plugins/Android/mainTemplate.gradle, inside dependencies { … }
-   implementation 'com.github.fload-ai:fload-attribution-android:1.1.0'
+   implementation 'com.fload:attribution:1.1.0'
    ```
+
+   Unity's Gradle templates list `mavenCentral()` already, so no repository is
+   needed. Both ways use the same coordinates, so a project that adds EDM4U later
+   still has the library once.
 
 3. **iOS: the minimum version.** Set Project Settings > Player > iOS > Other
    Settings > Target minimum iOS Version to 15.0. The build stops with that

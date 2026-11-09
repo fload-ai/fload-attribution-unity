@@ -1,6 +1,6 @@
 {
   "name": "com.fload.attribution",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "displayName": "Fload Attribution",
   "description": "Fload install attribution for Unity apps on iOS and Android: Apple Ads through Apple's AdServices token, Google Play through the Install Referrer. No IDFA, no tracking prompt, no events. Wraps fload-attribution-ios and fload-attribution-android.",
   "unity": "2021.3",
