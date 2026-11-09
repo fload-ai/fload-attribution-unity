@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Read by the External Dependency Manager for Unity (EDM4U,
      https://github.com/googlesamples/unity-jar-resolver), which adds the Kotlin
-     SDK to the Android Gradle build. JitPack builds it from the git tags of
-     github.com/fload-ai/fload-attribution-android.
+     SDK to the Android Gradle build, from Maven Central (com.fload:attribution,
+     since 9 Nov 2026), the same coordinates a project without EDM4U adds by hand.
      iOS needs no entry: the Swift SDK's sources ship in Plugins/iOS, because the
      CocoaPods trunk turns read-only on 2 December 2026 and the SDK is not a pod. -->
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.github.fload-ai:fload-attribution-android:1.1.0">
+    <androidPackage spec="com.fload:attribution:1.1.0">
       <repositories>
-        <repository>https://jitpack.io</repository>
+        <repository>https://repo.maven.apache.org/maven2</repository>
       </repositories>
     </androidPackage>
   </androidPackages>

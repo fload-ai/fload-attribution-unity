@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Xml.Linq;
 using Fload.Attribution;
 using Fload.Attribution.Editor;
 
@@ -58,6 +60,15 @@ internal static class HostTests
         Check(IosTargetVersion.Problem("16") == null, "iOS 16 (no minor) target is fine");
         Check(IosTargetVersion.Problem("13.0") != null, "iOS 13.0 target is refused");
         Check(IosTargetVersion.Problem("") != null, "unset target is refused");
+
+        // EDM4U takes the Kotlin SDK from Maven Central (FLO-4176), the coordinates a project
+        // without EDM4U adds by hand too, so a build never holds the library under two names.
+        var dependencies = XDocument.Load("Editor/FloadAttributionDependencies.xml");
+        var android = dependencies.Descendants("androidPackage").ToList();
+        Check(android.Count == 1 && (string)android[0].Attribute("spec") == "com.fload:attribution:1.1.0",
+            "EDM4U adds com.fload:attribution:1.1.0");
+        Check(dependencies.Descendants("repository").All(r => !r.Value.Contains("jitpack")),
+            "EDM4U asks no JitPack repository");
 
         Console.WriteLine(_failures == 0 ? "all passed" : _failures + " failed");
         return _failures == 0 ? 0 : 1;

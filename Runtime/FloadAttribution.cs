@@ -16,7 +16,7 @@ namespace Fload.Attribution
     public static class FloadAttribution
     {
         /// <summary>This package's version.</summary>
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.1";
 
         /// <summary>
         /// The name every native configure call gives this wrapper, with <see cref="Version"/>.
